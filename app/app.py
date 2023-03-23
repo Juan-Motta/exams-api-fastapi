@@ -1,9 +1,13 @@
-from fastapi import FastAPI
+from datetime import datetime
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 from app.routers.base import router as base_router
 from app.routers.user import router as users_router
-
 from app.database.migrations import create_tables
+from app.config.error_handler import ApiError
+
 
 app: FastAPI = FastAPI()
 
@@ -17,3 +21,15 @@ async def startup_event() -> None:
 @app.on_event("shutdown")
 async def shutdown() -> None:
     pass
+
+@app.exception_handler(ApiError)
+async def custom_error_handler(request: Request, exc: ApiError):
+    return JSONResponse(
+        status_code=exc.code,
+        content={
+            "code": exc.code,
+            "success": False,
+            "message": str(exc),
+            "time_stamp": datetime.now().strftime("%y-%m-%d %H:%M:%S")
+        },
+    )
