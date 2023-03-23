@@ -14,4 +14,10 @@ def create_user_service(db: Session, request: UserSchema) -> Dict:
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+    return {
+        "id": user.id,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email,
+        "active": user.active
+    }
