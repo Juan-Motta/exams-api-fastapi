@@ -2,6 +2,9 @@ import re
 from typing import Dict, Optional
 from pydantic import BaseModel, validator, root_validator, PydanticValueError
 
+from app.utils.password_hash import hash_password
+
+
 class UserSchema(BaseModel):
     id: Optional[int]
     first_name: Optional[str]
@@ -37,8 +40,11 @@ class UserSchema(BaseModel):
     
     @root_validator
     def validate_passwords_match(cls, values: Dict) -> Dict:
-        pw1 = values.get("password") 
-        pw2 = values.get("password_confirmation")
+        pw1: Optional[str] = values.get("password") 
+        pw2: Optional[str] = values.get("password_confirmation")
         if pw1 is not None and pw2 is not None and pw1 != pw2:
             raise PydanticValueError(msg_template="passwords do not match")
+        hashed_password: str = hash_password(pw1)
+        values["password"] = hashed_password
+        values["password_confirmation"] = hashed_password
         return values
