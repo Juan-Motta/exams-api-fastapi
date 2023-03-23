@@ -9,8 +9,8 @@ class UserModel(Base, TimestampMixin):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String, index=True)
-    last_name = Column(String, index=True)
-    email = Column(String, index=True)
-    password = Column(String)
+    first_name = Column(String, index=True, nullable=False)
+    last_name = Column(String, index=True, nullable=False)
+    email = Column(String, index=True, nullable=False, unique=True)
+    password = Column(String, nullable=False, index=True)
     
