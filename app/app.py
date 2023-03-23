@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from app.routers.base import router as base_router
 from app.routers.user import router as users_router
@@ -30,6 +31,20 @@ async def custom_error_handler(request: Request, exc: ApiError):
             "code": exc.code,
             "success": False,
             "message": str(exc),
+            "time_stamp": datetime.now().strftime("%y-%m-%d %H:%M:%S")
+        },
+    )
+    
+@app.exception_handler(RequestValidationError)
+async def custom_error_handler(request: Request, exc: RequestValidationError):
+    print(exc.errors())
+    errors = [error.get("ctx") for error in exc.errors()]
+    return JSONResponse(
+        status_code=400,
+        content={
+            "code": 400,
+            "success": False,
+            "errors": errors,
             "time_stamp": datetime.now().strftime("%y-%m-%d %H:%M:%S")
         },
     )
