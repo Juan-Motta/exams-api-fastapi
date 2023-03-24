@@ -1,6 +1,5 @@
-from datetime import datetime
 from sqlalchemy import Column
-from sqlalchemy.sql.sqltypes import Integer, String, DateTime, Boolean
+from sqlalchemy.sql.sqltypes import Integer, String
 
 from app.database.base import Base
 from app.database.mixins import TimestampMixin
